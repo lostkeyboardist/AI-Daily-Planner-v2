@@ -18,7 +18,7 @@ class AIAgent:
                 
             role = "user" if msg["role"] == "user" else "model"
             formatted_contents.append(
-                types.Content(role=role, parts=[types.Part.from_text(msg["content"])])
+                types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])])
             )
             
         import time
