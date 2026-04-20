@@ -11,17 +11,24 @@ class AIAgent:
         """Generates a schedule based on the user input and the system prompt."""
         full_prompt = f"{system_prompt}\n\nUser Input: {user_input}"
         
-        try:
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=full_prompt,
-                config=types.GenerateContentConfig(
-                    tools=[{"google_search": {}}]
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=full_prompt,
+                    config=types.GenerateContentConfig(
+                        tools=[{"google_search": {}}]
+                    )
                 )
-            )
-            return response.text
-        except APIError as e:
-            if "429" in str(e):
-                raise Exception("System busy (Rate limit reached). Please wait 60 seconds and try again.")
-            else:
-                raise Exception(f"API Error: {e}")
+                return response.text
+            except APIError as e:
+                if "503" in str(e) or "429" in str(e):
+                    if attempt < max_retries - 1:
+                        time.sleep(2)
+                        continue
+                    else:
+                        raise Exception("SERVER_OVERWHELMED")
+                else:
+                    raise Exception(f"API Error: {e}")

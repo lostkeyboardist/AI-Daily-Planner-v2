@@ -37,7 +37,10 @@ def main():
             try:
                 assistant_reply = agent.generate_schedule(system_prompt, prompt)
             except Exception as e:
-                st.error(str(e))
+                if str(e) == "SERVER_OVERWHELMED":
+                    st.warning("Google's servers are a bit overwhelmed right now. Give it a minute and try again!")
+                else:
+                    st.error(str(e))
                 st.stop()
         
         with st.chat_message("assistant"):
