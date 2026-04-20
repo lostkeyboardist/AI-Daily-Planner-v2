@@ -31,7 +31,6 @@ class AIAgent:
                     config=types.GenerateContentConfig(
                         system_instruction=system_prompt,
                         tools=[{"google_search": {}}],
-                        max_output_tokens=800,
                         stop_sequences=["###", "\n\nUser Input:"]
                     )
                 )
