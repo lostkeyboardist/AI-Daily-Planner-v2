@@ -19,7 +19,8 @@ class AIAgent:
                     model=self.model_name,
                     contents=full_prompt,
                     config=types.GenerateContentConfig(
-                        tools=[{"google_search": {}}]
+                        tools=[{"google_search": {}}],
+                        max_output_tokens=800
                     )
                 )
                 return response.text
