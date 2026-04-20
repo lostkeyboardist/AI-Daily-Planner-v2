@@ -21,7 +21,7 @@ def main():
     
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "Hi! I am your Context-Aware AI Planner. To save time and get a perfectly tuned schedule, please tell me your tasks, your current location, and any specific preferences (e.g., cravings for lunch, meeting types) all in one message!"}
+            {"role": "assistant", "content": "Hey! Ready when you are. Where are we headed today?"}
         ]
         
     for msg in st.session_state.messages:
@@ -35,7 +35,7 @@ def main():
         
         with st.spinner('Optimizing your schedule...'):
             try:
-                assistant_reply = agent.generate_schedule(system_prompt, prompt)
+                assistant_reply = agent.generate_schedule(system_prompt, st.session_state.messages)
             except Exception as e:
                 if str(e) == "SERVER_OVERWHELMED":
                     st.warning("Google's servers are a bit overwhelmed right now. Give it a minute and try again!")

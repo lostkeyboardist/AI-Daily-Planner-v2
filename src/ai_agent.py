@@ -7,20 +7,32 @@ class AIAgent:
         self.client = genai.Client(api_key=api_key)
         self.model_name = 'gemini-2.5-flash'
 
-    def generate_schedule(self, system_prompt: str, user_input: str) -> str:
-        """Generates a schedule based on the user input and the system prompt."""
-        full_prompt = f"{system_prompt}\n\nUser Input: {user_input}"
+    def generate_schedule(self, system_prompt: str, chat_history: list) -> str:
+        """Generates a schedule based on the full chat history, injected with memory."""
         
+        formatted_contents = []
+        for msg in chat_history:
+            # Skip the placeholder intro to avoid confusing the model's history flow
+            if msg["role"] == "assistant" and "Ready when you are" in msg["content"]:
+                continue
+                
+            role = "user" if msg["role"] == "user" else "model"
+            formatted_contents.append(
+                types.Content(role=role, parts=[types.Part.from_text(msg["content"])])
+            )
+            
         import time
         max_retries = 3
         for attempt in range(max_retries):
             try:
                 response = self.client.models.generate_content(
                     model=self.model_name,
-                    contents=full_prompt,
+                    contents=formatted_contents,
                     config=types.GenerateContentConfig(
+                        system_instruction=system_prompt,
                         tools=[{"google_search": {}}],
-                        max_output_tokens=800
+                        max_output_tokens=800,
+                        stop_sequences=["###", "\n\nUser Input:"]
                     )
                 )
                 return response.text
