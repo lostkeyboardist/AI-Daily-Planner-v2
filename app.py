@@ -4,49 +4,53 @@ from src.prompts import get_system_prompt
 from src.ai_agent import AIAgent
 
 def init_app():
-    """Initializes configurations and the AI Agent."""
+    """Initializes configurations and returns the AI Agent instance."""
     api_key = get_api_key()
     if not api_key:
-        st.error('API Key not found. Please check your .env file.')
+        st.error('GEMINI_API_KEY not found in Streamlit Secrets. Please check your configuration.')
         st.stop()
     return AIAgent(api_key)
 
 def main():
-    st.set_page_config(page_title="Your New Personal AI Assistant")
-    st.title("Your New Personal AI Assistant")
+    st.set_page_config(page_title="AI Daily Planner", page_icon="📅")
+    st.title("Your Personal AI Assistant")
     
     # Initialize components
     agent = init_app()
     system_prompt = get_system_prompt()
     
+    # Session State Strategy: Initialize with a friendly human greeting
     if "messages" not in st.session_state:
         st.session_state.messages = [
             {"role": "assistant", "content": "Hey! Ready when you are. Where are we headed today?"}
         ]
         
+    # Display the conversation history
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
-            st.write(msg["content"])
+            st.markdown(msg["content"])
             
+    # Capture and Process User Input
     if prompt := st.chat_input("Type your tasks here..."):
+        # Display user message immediately
         with st.chat_message("user"):
-            st.write(prompt)
+            st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
         
-        with st.spinner('Optimizing your schedule...'):
-            try:
-                assistant_reply = agent.generate_schedule(system_prompt, st.session_state.messages)
-            except Exception as e:
-                if str(e) == "SERVER_OVERWHELMED":
-                    st.warning("Google's servers are a bit overwhelmed right now. Give it a minute and try again!")
-                else:
-                    st.error(str(e))
-                st.stop()
-        
+        # Assistant generation loop
         with st.chat_message("assistant"):
-            st.write(assistant_reply)
-        st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
-
+            with st.spinner('Checking local gems...'):
+                try:
+                    assistant_reply = agent.generate_schedule(system_prompt, st.session_state.messages)
+                    st.markdown(assistant_reply)
+                    st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
+                except Exception as e:
+                    if str(e) == "SERVER_OVERWHELMED":
+                        st.warning("Google's servers are a bit overwhelmed right now. Give it a minute and try again!")
+                    else:
+                        st.error(str(e))
+        
+    # Footer UI
     st.markdown(
         """
         <style>

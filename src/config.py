@@ -1,7 +1,8 @@
-import os
-from dotenv import load_dotenv
+import streamlit as st
 
 def get_api_key():
-    """Loads environment configuration and returns the Gemini API Key."""
-    load_dotenv()
-    return os.getenv('GEMINI_API_KEY')
+    """Returns the Gemini API Key from Streamlit Secrets."""
+    try:
+        return st.secrets["GEMINI_API_KEY"]
+    except KeyError:
+        return None
