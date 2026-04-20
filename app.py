@@ -21,7 +21,7 @@ def main():
     
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "Hi! I am your Context-Aware AI Planner. To save time and get a perfectly tuned schedule, please tell me your tasks, your current location, and any specific preferences (e.g., cravings for lunch, meeting types) all in one message!"}
+            {"role": "assistant", "content": "Hey! Ready when you are. Where are we headed today?"}
         ]
         
     for msg in st.session_state.messages:
