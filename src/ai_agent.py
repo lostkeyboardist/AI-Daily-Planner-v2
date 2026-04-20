@@ -5,7 +5,7 @@ from google.genai.errors import APIError
 class AIAgent:
     def __init__(self, api_key: str):
         self.client = genai.Client(api_key=api_key)
-        self.model_name = 'gemini-2.0-flash'
+        self.model_name = 'gemini-2.5-flash'
 
     def generate_schedule(self, system_prompt: str, chat_history: list) -> str:
         """Generates a schedule based on the full chat history, injected with memory."""
