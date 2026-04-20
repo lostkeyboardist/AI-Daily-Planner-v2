@@ -47,8 +47,28 @@ def main():
             st.write(assistant_reply)
         st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
 
-    st.markdown("---")
-    st.markdown("<div style='text-align: center; color: grey;'>© 2026 Priyanshu Jha. All rights reserved.</div>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: transparent;
+            color: grey;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 12px;
+            z-index: 999;
+        }
+        </style>
+        <div class="footer">
+            © 2026 Priyanshu Jha. All rights reserved.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 if __name__ == "__main__":
     main()
